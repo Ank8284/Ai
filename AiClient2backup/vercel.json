@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/backend.py",
+      "use": "@vercel/python",
+      "config": { "runtime": "python3.9" }
+    },
+    {
+      "src": "frontend/index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "api/backend.py" },
+    { "src": "/(.*)", "dest": "frontend/index.html" }
+  ],
+  "installCommand": "pip install -r api/requirements.txt",
+  "buildCommand": "pip install -r api/requirements.txt",
+  "outputDirectory": "frontend"
+}

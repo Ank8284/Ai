@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        #chat-container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #1e1e1e;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        input, button {
+            margin: 5px;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        input {
+            width: 70%;
+        }
+        button {
+            background-color: #6200ea;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3700b3;
+        }
+        #response {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        #file-upload-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .custom-file-upload {
+            display: inline-block;
+            cursor: pointer;
+            background-color: #6200ea;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .custom-file-upload:hover {
+            background-color: #3700b3;
+        }
+        .hidden-file-input {
+            display: none;
+        }
+        #file-name {
+            font-size: 12px;
+            color: #bbb;
+            margin-left: 10px;
+        }
+        .bottom-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+    </style>
+    <script>
+        const API_BASE_URL = window.location.hostname.includes("vercel.app") 
+            ? "https://llm-eight.vercel.app" 
+            : "http://127.0.0.1:8000"; // Updated local backend URL
+
+        async function sendMessage() {
+            const message = document.getElementById("message").value;
+            if (!message) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/chat`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message })
+                });
+                if (!response.ok) throw new Error("Failed to get response");
+                
+                const data = await response.json();
+                const aiResponse = data.choices ? data.choices[0].message.content : "No response received";
+                document.getElementById("response").innerText = aiResponse;
+            } catch (error) {
+                document.getElementById("response").innerText = "Error: " + error.message;
+            }
+        }
+        function clearInput() {
+            document.getElementById("message").value = "";
+            document.getElementById("file-upload").value = "";
+            document.getElementById("file-name").innerText = "No file chosen";
+            document.getElementById("response").innerText = "";
+        }
+        function updateFileName() {
+            const fileInput = document.getElementById("file-upload");
+            const fileName = document.getElementById("file-name");
+            fileName.innerText = fileInput.files.length > 0 ? fileInput.files[0].name : "No file chosen";
+        }
+    </script>
+</head>
+<body>
+    <div id="chat-container">
+        <h1>Chat with AI</h1>
+        <div class="input-group">
+            <input type="text" id="message" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <div id="file-upload-container">
+            <label for="file-upload" class="custom-file-upload">📂 Choose File</label>
+            <input type="file" id="file-upload" class="hidden-file-input" onchange="updateFileName()">
+            <span id="file-name">No file chosen</span>
+            <button onclick="clearInput()">Clear</button>
+        </div>
+        <p id="response"></p>
+    </div>
+</body>
+</html>

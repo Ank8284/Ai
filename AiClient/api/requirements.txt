@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+httpx
+python-dotenv
+certifi
+python-multipart  # Added to fix missing dependency issue

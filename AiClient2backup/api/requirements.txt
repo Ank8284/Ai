@@ -1,0 +1,6 @@
+certifi==2024.12.14
+fastapi==0.115.12
+httpx==0.28.1
+pydantic==2.11.1
+python-dotenv==1.1.0
+uvicorn==0.34.0
