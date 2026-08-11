@@ -1,16 +1,20 @@
 import json
+from pathlib import Path
 import torch
 import torch.nn as nn
 import streamlit as st
 
+# Path
+BASE = Path(__file__).parent
+
 # Config
-with open("config.json") as f:
+with open(BASE / "config.json") as f:
     c = json.load(f)
 
 MAX_LEN = c["max_len"]
 
 # Vocabulary
-with open("vocab.json") as f:
+with open(BASE / "vocab.json") as f:
     vocab = json.load(f)
 
 UNK = vocab["<UNK>"]
@@ -39,7 +43,7 @@ model = LSTMClassifier(
 )
 
 model.load_state_dict(
-    torch.load("best_lstm.pt", map_location="cpu")
+    torch.load(BASE / "best_lstm.pt", map_location="cpu")
 )
 
 model.eval()
@@ -93,7 +97,6 @@ if st.button("Solve MCQ"):
         letters = ["A", "B", "C", "D", "E"]
 
         st.subheader("Top 3 Predictions")
-
         st.write(" ".join(letters[i] for i in top3))
 
         st.subheader("Scores")
